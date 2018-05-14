@@ -49,7 +49,7 @@
                 string++;
             });
 
-            shaderLoader.load('shader/fragment.glsl', function (data) {
+            shaderLoader.load('shader/line_fragment.glsl', function (data) {
                 fShader = data;
                 string++;
             });
@@ -175,7 +175,9 @@
                                         texture: {type: 't', value: texture}
                                     },
                                     vertexShader: vShader,
-                                    fragmentShader: fShader
+                                    fragmentShader: fShader,
+                                    transparent: true,
+                                    depthWrite: true
                                 });
 
                                 child.material = materialMap[child.material.id];
@@ -210,12 +212,6 @@
 
             controls.update();
 
-            //render normal
-            scene.overrideMaterial = null;
-            renderer.setClearColor('#000000');
-            renderer.clearTarget(texture, true, true);
-            renderer.render(scene, camera, texture);
-
             // render depth
             scene.overrideMaterial = depthMaterial;
             renderer.setClearColor('#000000');
@@ -228,8 +224,14 @@
             renderer.clearTarget(normalTexture, true, true);
             renderer.render(scene, camera, normalTexture);
 
+            //render normal
+            scene.overrideMaterial = null;
+            renderer.setClearColor('#000000');
+            renderer.clearTarget(texture, true, true);
+            renderer.render(scene, camera, texture);
+
             renderer.render(composeScene, composeCamera);
-            //renderer.render(scene, camera);
+            renderer.render(scene, camera);
         };
 
     </script>

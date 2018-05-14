@@ -24,8 +24,8 @@ float rim()
 {
  vec3 normal = normalize(fNormal);
  vec3 eye = normalize(-fPosition);
- float rim =  floor(dot(normal, eye)+0.6);
- return rim;
+ float rim = dot(normal, eye);
+ return (rim>0.65)?1.0:rim*rim;
 }
 
 void main()
@@ -37,6 +37,14 @@ void main()
  float brightness = ds.x + ds.y;
  
  brightness = ceil(brightness * 3.0)/ 3.0;
+
+ float rim = rim();
  
- gl_FragColor = texture2D(texture, vUv) * brightness * rim();
+ //gl_FragColor = texture2D(texture, vUv) * brightness * rim();
+ //vec2 findColor = vec2(rim,vUv.x/2.0+vUv.y/2.0);
+ vec2 findColor = vUv;
+ vec4 outline = texture2D(texture, findColor);
+ gl_FragColor = outline;
+// outline.a = 1.0- (outline.r+outline.g+outline.b) / 3.0;
+ //gl_FragColor = vec4(vec3(0.0), findColor);
 }
