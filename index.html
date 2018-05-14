@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kage Bunshin no Jutsu (影分身の術)</title>
+    <meta charset="UTF-8">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js"></script>
+    <script src="http://threejs.org/examples/js/loaders/MTLLoader.js"></script>
+    <script src="http://threejs.org/examples/js/loaders/OBJLoader.js"></script>
+    <script src="http://threejs.org/examples/js/controls/TrackballControls.js"></script>
+
+    <script>
+        //basic obj
+        var manager;
+        var scene, composeScene, camera, composeCamera, renderer;
+        var texture, depthTexture, normalTexture, depthMaterial, normalMaterial; //Texture & material
+        var vShader, fShader, vComposeShader, fComposeShader; //shader
+
+        //objects
+        var naruto;
+        
+        var string = 0;
+        loadingManager();
+        
+        function loadingManager() {
+            manager = new THREE.LoadingManager();
+            manager.onLoad = function () {
+                console.log('File loaded: ' + string);
+                init();
+                render();
+            }
+            
+            //load shader
+            var shaderLoader = new THREE.FileLoader(manager);
+
+            shaderLoader.load('shader/vertex.glsl', function (data) {
+                vShader = data;
+                string++;
+            });
+
+            shaderLoader.load('shader/fragment.glsl', function (data) {
+                fShader = data;
+                string++;
+            });
+
+            shaderLoader.load('shader/compose_vertex.glsl', function (data) {
+                vComposeShader = data;
+                string++;
+            });
+
+            shaderLoader.load('shader/compose_fragment.glsl', function (data) {
+                fComposeShader = data;
+                string++;
+            });
+        }
+
+        function init () {
+            var composeMaterial = {};
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x7ec0ee);
+
+            composeScene = new THREE.Scene();
+            composeScene.background = new THREE.Color(0xc07eee);
+
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            var aspect = width / height;
+
+            var pars = {
+                minFilter: THREE.LinearFilter,
+                magFilter: THREE.LinearFilter,
+                format: THREE.RGBFormat,
+                stencilBuffer: false
+            };
+            
+            normalMaterial = new THREE.MeshNormalMaterial();
+            depthMaterial = new THREE.MeshDepthMaterial();
+            texture = new THREE.WebGLRenderTarget(width, height, pars);
+            depthTexture = new THREE.WebGLRenderTarget(width, height, pars);
+            normalTexture = new THREE.WebGLRenderTarget(width, height, pars);
+
+            composeMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    texture: {type:'t', value: texture},
+                    depthTexture: {type:'t', value: depthTexture},
+                    normalTexture: {type:'t', value: normalTexture}
+                },
+                vertexShader: vComposeShader,
+                fragmentShader: fComposeShader
+            });
+
+            
+
+            //perspective camera -- for objects
+            camera = new THREE.PerspectiveCamera(35, aspect, 500, 3000);
+            camera.position.set(0,0,-1500);
+            camera.lookAt(new THREE.Vector3(0, 0, -1000));
+            controls = new THREE.TrackballControls(camera);
+            
+            //orthogrpthic camera -- for drawing outline
+            composeCamera = new THREE.OrthographicCamera(-width / 2, width / 2, height / 2, -height / 2, -10000, 10000);
+            var composePlaneGeometry = new THREE.PlaneBufferGeometry(width, height);
+            console.log('material a');
+            console.log(composeMaterial);
+            //composeMaterial =  new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.FrontSide} );
+            //console.log('material b');
+            //console.log(composeMaterial);
+            composePlaneMesh = new THREE.Mesh(composePlaneGeometry, composeMaterial);
+            //composePlaneMesh.rotation.set(Math.PI,0,0);
+            
+            composeScene.add(composePlaneMesh);
+
+            renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: true });
+            //renderer.setPixelRatio( window.devicePixelRatio );
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            renderer.context.getShaderInfoLog = function () { return '' };
+            // temp bug fixing, avoid shaders dumping to console
+
+            //load objects
+            var mtlLoader = new THREE.MTLLoader();
+            mtlLoader.setPath('obj/86b61s2onq-Naruto/');
+            mtlLoader.load('2nrtbod1out.mtl', function (materials) {
+
+                materials.preload();
+
+                var objLoader = new THREE.OBJLoader();
+                objLoader.setMaterials(materials);
+                objLoader.setPath('obj/86b61s2onq-Naruto/');
+                objLoader.load('2nrtbod1out.obj', function (object) {
+
+                    //initial stats
+                    object.position.set(0, -100, 0);
+                    object.rotation.set(-Math.PI / 2, 0, 0);
+
+                    //load texture
+                    var textureLoader = new THREE.TextureLoader();
+                    textureLoader.setPath('obj/86b61s2onq-Naruto/');
+
+                    //load shader for it
+                    var materialMap = {};
+                    object.traverse(function (child) {
+                        if (child instanceof THREE.Mesh) {
+                            if (child.material.id in materialMap) {
+                                console.log("Using predefined material");
+                                child.material = materialMap[child.material.id];
+                                console.log(child.material);
+                            } else {
+                                console.log("Creating new material");
+                                console.log(child.material);
+
+                                var texture;
+
+                                if (child.material.name != "Material__3")
+                                    texture = textureLoader.load('ntxr001.png');
+                                else
+                                    texture = textureLoader.load('ntxr005.png');
+                                
+                                materialMap[child.material.id] = new THREE.ShaderMaterial({
+                                    uniforms: {
+                                        texture: {type: 't', value: texture}
+                                    },
+                                    vertexShader: vShader,
+                                    fragmentShader: fShader
+                                });
+
+                                child.material = materialMap[child.material.id];
+                            }
+                        }
+                    });
+
+                    scene.add(object);
+                    naruto = object;
+
+                    for (var i = 0; i < 20; i ++) {
+                        var newObj = naruto.clone();
+                        newObj.position.set(Math.random()*700-350,-100 + Math.random()*400 - 200,Math.random()*700-350);
+                        newObj.rotation.set(Math.PI*Math.random()*2,Math.PI*Math.random()*2,Math.PI*Math.random()*2);
+                        scene.add(newObj);
+                    }
+                });
+            });
+
+            window.addEventListener( 'resize', onWindowResize, false );
+        };
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+        }
+
+        function render() {
+            requestAnimationFrame(render);
+
+            controls.update();
+
+            //render normal
+            scene.overrideMaterial = null;
+            renderer.setClearColor('#000000');
+            renderer.clearTarget(texture, true, true);
+            renderer.render(scene, camera, texture);
+
+            // render depth
+            scene.overrideMaterial = depthMaterial;
+            renderer.setClearColor('#000000');
+            renderer.clearTarget(depthTexture, true, true);
+            renderer.render(scene, camera, depthTexture);
+
+            // render normal
+            scene.overrideMaterial = normalMaterial;
+            renderer.setClearColor('#000000');
+            renderer.clearTarget(normalTexture, true, true);
+            renderer.render(scene, camera, normalTexture);
+
+            renderer.render(composeScene, composeCamera);
+            //renderer.render(scene, camera);
+        };
+
+    </script>
+
+</body>
+
+</html>
