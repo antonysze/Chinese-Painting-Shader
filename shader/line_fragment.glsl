@@ -11,7 +11,7 @@ uniform sampler2D inkTexture;
 
 const float sigma = 1.0;
 const float pi = 3.14159265;
-const float _thred = 0.65;
+const float _thred = 0.7;
 
 vec2 blinnPhongDir(vec3 lightDir, float lightInt, float Ka, float Kd, float Ks, float shininess)
 {
@@ -45,7 +45,7 @@ void main()
 
  float rim = rim();
  if (rim < 1.0)
-    rim = clamp(sin(((rim-0.3)/_thred+0.5)*pi), 0.0, 1.0);
+    rim = clamp(sin((rim+1.0-_thred)*pi), 0.0, 1.0);
 
  
  //gl_FragColor = texture2D(texture, vUv) * brightness * rim();

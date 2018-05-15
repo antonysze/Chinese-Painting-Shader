@@ -20,18 +20,18 @@ void main() {
 
     float px = 1.0/1600.0 ;
 
-    float Gx = texture2D(normalTexture, vec2(vUv.s + px, vUv.t - px)).r +
-        texture2D(normalTexture, vec2(vUv.s + px, vUv.t)).r * 2.0 +
-        texture2D(normalTexture, vec2(vUv.s + px, vUv.t - px)).r -
-        texture2D(normalTexture, vec2(vUv.s - px, vUv.t - px)).r -
-        texture2D(normalTexture, vec2(vUv.s - px, vUv.t)).r * 2.0 -
-        texture2D(normalTexture, vec2(vUv.s - px, vUv.t - px)).r;
-    float Gy = texture2D(normalTexture, vec2(vUv.s - px, vUv.t - px)).r +
-        texture2D(normalTexture, vec2(vUv.s, vUv.t - px)).r * 2.0 +
-        texture2D(normalTexture, vec2(vUv.s + px, vUv.t - px)).r -
-        texture2D(normalTexture, vec2(vUv.s - px, vUv.t + px)).r -
-        texture2D(normalTexture, vec2(vUv.s, vUv.t + px)).r * 2.0 -
-        texture2D(normalTexture, vec2(vUv.s + px, vUv.t + px)).r;
+    float Gx = texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r +
+        texture2D(depthTexture, vec2(vUv.s + px, vUv.t)).r * 2.0 +
+        texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r -
+        texture2D(depthTexture, vec2(vUv.s - px, vUv.t - px)).r -
+        texture2D(depthTexture, vec2(vUv.s - px, vUv.t)).r * 2.0 -
+        texture2D(depthTexture, vec2(vUv.s - px, vUv.t - px)).r;
+    float Gy = texture2D(depthTexture, vec2(vUv.s - px, vUv.t - px)).r +
+        texture2D(depthTexture, vec2(vUv.s, vUv.t - px)).r * 2.0 +
+        texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r -
+        texture2D(depthTexture, vec2(vUv.s - px, vUv.t + px)).r -
+        texture2D(depthTexture, vec2(vUv.s, vUv.t + px)).r * 2.0 -
+        texture2D(depthTexture, vec2(vUv.s + px, vUv.t + px)).r;
     
     float G = abs(Gx) + abs(Gy);
     
@@ -54,9 +54,10 @@ void main() {
     float normEdge = max(length(leftnor - rightnor), length(upnor - downnor));
     normEdge = 1.0 - normEdge; 
     */
-    float edge = 1.0 - (G<0.3?0.0:G);
+    //float edge = 1.0 - (G<0.3?0.0:G);
+    float edge = 1.0 - clamp(sign(G-0.1),0.0,1.0);
     vec3 color = texture2D(texture, vUv).xyz;
-    color = floor(color*4.0)/4.0;
+    //color = floor(color*4.0)/4.0;
 
     //edge = pow(edge,2.0);
     gl_FragColor = vec4(vec3(edge) * color, 1.0);
