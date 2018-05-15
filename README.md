@@ -12,14 +12,32 @@
 <li><a href="https://blog.csdn.net/wolf96/article/details/43670851">unity3d shader之Roberts,Sobel,Canny 三种边缘检测方法</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/25339585">在Unity中如何进行水墨风3D渲染 (雞)</a></li>
 <li><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=6643655">Accelerating Harris Algorithm with GPU for Corner Detection</a></li>
+<li><a href="https://www.youtube.com/watch?v=7en8Y0GM55I">Ink Brush tutorial 水墨特效教學(Unity+3dsmax+After Effect)</a></li>
+<li><a href="https://realtimevfx.com">Real Time VFX</a></li>
+<li><a href="http://flafla2.github.io/2014/08/09/perlinnoise.html">Perlin Noise</a></li>
+</ol>
+<h3 id="paper">Paper</h3>
+<ol>
+<li><strong>Cornell university</strong>
+<ol>
+<li><a href="https://github.com/jcjohnson/neural-style">A Neural Algorithm of Artistic Style</a></li>
+<li><a href="https://github.com/manuelruder/artistic-videos">Artistic style transfer for videos (implementation of neural-style)</a></li>
+<li><a href="https://github.com/manuelruder/artistic-videos">Artistic style transfer for videos and spherical images (faster then above)</a></li>
+</ol>
+</li>
 </ol>
 <h3 id="photoshop-reference">Photoshop Reference</h3>
 <p><a href="https://design.tutsplus.com/tutorials/how-to-create-a-traditional-chinese-ink-painting-based-on-a-scenic-photo--psd-4807">How to Create a Traditional, Chinese Ink Painting Based on a Scenic Photo</a></p>
 <h3 id="other-reference">Other Reference</h3>
-<p><a href="http://www.cse.psu.edu/~rtc12/CSE486/">Computer Vision I (Penn State University)</a></p>
+<p><a href="http://www.cse.psu.edu/~rtc12/CSE486/">Computer Vision I (Penn State University)</a><br>
+<a href="http://blog.sina.com.cn/s/blog_471132920101dayr.html">Unity3D教程宝典之Shader篇：特别讲 CG函数</a></p>
+<h3 id="tools">Tools</h3>
+<ol>
+<li><a href="https://www.desmos.com/calculator">Desmos | Graphing Calculator</a></li>
+</ol>
 <h3 id="ideas">ideas</h3>
 <ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> Check the normal around the original point by <strong>Sobel Edge Detection</strong><a href="#shader-reference">^</a>, the alpha be lower if the normal are very different</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> Check the normal around the original point by <strong>Sobel Edge Detection</strong><a href="#shader-reference">^4</a>, the alpha be lower if the normal are very different</li>
 </ul>
 <h3 id="exercise-5">Exercise 5</h3>
 <pre class=" language-glsl"><code class="prism  language-glsl"><span class="token keyword">precision</span> <span class="token keyword">highp</span> <span class="token keyword">float</span><span class="token punctuation">;</span>
