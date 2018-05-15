@@ -26,7 +26,7 @@
         var scene, composeScene, camera, composeCamera, renderer;
         var texture, depthTexture, normalTexture, depthMaterial, normalMaterial; //Texture & material
         var vShader, fShader, vCPShader, fCPShader, vComposeShader, fComposeShader; //shader
-        var inkTexture;
+        var inkTexture,inkInnerTexture;
 
         //objects
         var naruto;
@@ -79,6 +79,10 @@
             //load texture
             textureLoader.load('resources/texture/ink_texture5_edit.png', function (data){
                 inkTexture = data;
+                string++;
+            });
+            textureLoader.load('resources/texture/ink_inner_texture.jpg', function(data) {
+                inkInnerTexture = data;
                 string++;
             });
         }
@@ -227,7 +231,8 @@
                                 materialMap[child.material.id] = new THREE.ShaderMaterial({
                                     uniforms: {
                                         texture: {type: 't', value: texture},
-                                        inkTexture: {type: 't', value: inkTexture}
+                                        inkTexture: {type: 't', value: inkTexture},
+                                        inkInnerTexture: {type: 't', value: inkInnerTexture}
                                     },
                                     vertexShader: vCPShader,
                                     fragmentShader: fCPShader,
@@ -243,7 +248,7 @@
                     scene.add(object);
                     naruto = object;
 
-                    for (var i = 0; i < 5; i ++) {
+                    for (var i = 0; i < 10; i ++) {
                         var newObj = naruto.clone();
                         newObj.position.set(Math.random()*700-350,-100 + Math.random()*400 - 200,Math.random()*700-350);
                         newObj.rotation.set(Math.PI*Math.random()*2,Math.PI*Math.random()*2,Math.PI*Math.random()*2);
@@ -288,7 +293,8 @@
                                 materialMap[child.material.id] = new THREE.ShaderMaterial({
                                     uniforms: {
                                         texture: {type: 't', value: texture},
-                                        inkTexture: {type: 't', value: inkTexture}
+                                        inkTexture: {type: 't', value: inkTexture},
+                                        inkInnerTexture: {type: 't', value: inkInnerTexture}
                                     },
                                     vertexShader: vCPShader,
                                     fragmentShader: fCPShader,
@@ -316,7 +322,8 @@
                             materialMap[child.material.id] = new THREE.ShaderMaterial({
                                 uniforms: {
                                     texture: {type: 't', value: texture},
-                                    inkTexture: {type: 't', value: inkTexture}
+                                    inkTexture: {type: 't', value: inkTexture},
+                                    inkInnerTexture: {type: 't', value: inkInnerTexture}
                                 },
                                 vertexShader: vShader,
                                 fragmentShader: fShader

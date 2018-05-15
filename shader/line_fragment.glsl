@@ -8,10 +8,11 @@ varying vec2 vUv;
 
 uniform sampler2D texture;
 uniform sampler2D inkTexture;
+uniform sampler2D inkInnerTexture;
 
 const float sigma = 1.0;
 const float pi = 3.14159265;
-const float _thred = 0.7;
+const float _thred = 0.8;
 
 vec2 blinnPhongDir(vec3 lightDir, float lightInt, float Ka, float Kd, float Ks, float shininess)
 {
@@ -44,18 +45,29 @@ void main()
  brightness = ceil(brightness * 3.0)/ 3.0;
 
  float rim = rim();
- if (rim < 1.0)
-    rim = clamp(sin((rim+1.0-_thred)*pi), 0.0, 1.0);
+ rim = clamp(sin((rim/_thred+0.15)*pi), 0.0, 1.0);
 
  
  //gl_FragColor = texture2D(texture, vUv) * brightness * rim();
  //vec2 findColor = vec2(rim,vUv.x/2.0+vUv.y/2.0);
- vec2 findColor = vUv;
- vec4 outline = texture2D(texture, findColor);
- gl_FragColor = outline;
+ 
  // outline.a = 1.0- (outline.r+outline.g+outline.b) / 3.0;
+ 
+ //gl_FragColor = vec4(vec3(0.0), sqrt(alpah));
+ //gl_FragColor = vec4(vec3(0.0), rim);
+
+
+//outline
  float ink = texture2D(inkTexture, fract(vUv*2.0)).r;
  float alpah = clamp(rim-ink, 0.0, 1.0);
- gl_FragColor = vec4(vec3(0.0), sqrt(alpah));
- //gl_FragColor = vec4(vec3(0.0), rim);
+    vec4 outline = vec4(vec3(0.0), sqrt(alpah));
+
+//inner
+ vec3 originColor = texture2D(texture, vUv).xyz;
+ originColor = floor(originColor*4.0)/4.0;
+ vec3 inkInner = texture2D(inkInnerTexture, fract(vUv*5.0)).xyz;
+ originColor *= inkInner * ink;
+ vec4 innerColor = vec4(originColor, inkInner * ink*2.0);
+
+ gl_FragColor = outline;// +  innerColor;
 }
