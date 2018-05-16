@@ -35,7 +35,7 @@
 - [not gonna try] ~~Check the normal around the original point by **Sobel Edge Detection**[^4](#shader-reference), the alpha be lower if the normal are very different~~
 - inner ink texture base on brightness, not longer uv
 - blur inner color then mix the ink texture
-- edge draw by normal of object shader not working on low poly object like rock, **Sobel Edge Detection**[^4](#shader-reference)
+- edge draw by normal of object shader not working on low poly object like rock, gonna use **Sobel Edge Detection**[^4](#shader-reference) on hole screen shader
 
 ### Exercise 5
 
@@ -86,6 +86,6 @@ void main()
 }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTUyNDk3NTU5NywtMTYyODA4MjE5MiwtNj
-E4NTY1NzIxXX0=
+eyJoaXN0b3J5IjpbNDY1ODA1NjcxLDE1MjQ5NzU1OTcsLTYxOD
+U2NTcyMV19
 -->
