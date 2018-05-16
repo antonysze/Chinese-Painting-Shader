@@ -1,4 +1,5 @@
 ![enter image description here](https://lh3.googleusercontent.com/u_6Wx_Ebtp34lBk2PIHO_zGgQAE9GMxJU8_ANIhv_bvSNVcsS6T8r4oO0-_K5-IhaeVI7RsBiuU)
+![enter image description here](https://lh3.googleusercontent.com/3nbKT7jVPRDi3hDn4dAY2tEeMebfYdeAw3ciR3hXt98esV1-MzLW1v5VcIlXpgaAbsMF8YYKOiY)
 ### Shader Reference
 1. [水墨畫search](https://so.csdn.net/so/search/s.do?q=%E6%B0%B4%E5%A2%A8%E7%95%AB+shader&t=blog&o=&s=&l=)
 2. [水墨畫 shader](https://blog.csdn.net/nannan0811666/article/details/79452197)
@@ -9,6 +10,7 @@
 7. [Ink Brush tutorial 水墨特效教學(Unity+3dsmax+After Effect)](https://www.youtube.com/watch?v=7en8Y0GM55I)
 8. [Real Time VFX](https://realtimevfx.com)
 9. [Perlin Noise](http://flafla2.github.io/2014/08/09/perlinnoise.html)
+10. [optimized single-pass blur shaders for GLSL](https://github.com/Jam3/glsl-fast-gaussian-blur) 
 
 ### Paper
 1. **Cornell university**
@@ -26,8 +28,14 @@
 ### Tools
 1. [Desmos | Graphing Calculator](https://www.desmos.com/calculator)
 
-### ideas
-- [ ] Check the normal around the original point by **Sobel Edge Detection**[^4](#shader-reference), the alpha be lower if the normal are very different
+### Three Js
+1. [Uniforms types](https://github.com/mrdoob/three.js/wiki/Uniforms-types)
+
+### ideas & notes
+- [not gonna try] ~~Check the normal around the original point by **Sobel Edge Detection**[^4](#shader-reference), the alpha be lower if the normal are very different~~
+- inner ink texture base on brightness, not longer uv
+- blur inner color then mix the ink texture
+- edge draw by normal of object shader
 
 ### Exercise 5
 
@@ -78,5 +86,5 @@ void main()
 }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTYzNDQ4MzgxMV19
+eyJoaXN0b3J5IjpbLTYxODU2NTcyMV19
 -->
