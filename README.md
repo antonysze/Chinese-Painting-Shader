@@ -24,8 +24,8 @@ https://github.com/antonysze/Chinese-Painting-Shader.git
 [How to Create a Traditional, Chinese Ink Painting Based on a Scenic Photo](https://design.tutsplus.com/tutorials/how-to-create-a-traditional-chinese-ink-painting-based-on-a-scenic-photo--psd-4807)
 
 ### Other Reference
-[Computer Vision I (Penn State University)](http://www.cse.psu.edu/~rtc12/CSE486/)
-[Unity3D教程宝典之Shader篇：特别讲 CG函数](http://blog.sina.com.cn/s/blog_471132920101dayr.html)
+1. [Computer Vision I (Penn State University)](http://www.cse.psu.edu/~rtc12/CSE486/)
+2. [Unity3D教程宝典之Shader篇：特别讲 CG函数](http://blog.sina.com.cn/s/blog_471132920101dayr.html)
 
 ### Tools
 1. [Desmos | Graphing Calculator](https://www.desmos.com/calculator)
@@ -92,6 +92,6 @@ void main()
 }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIyMzEzNzI2OCw0NjU4MDU2NzEsMTUyND
+eyJoaXN0b3J5IjpbMTMyNzc5OTgyOSw0NjU4MDU2NzEsMTUyND
 k3NTU5NywtNjE4NTY1NzIxXX0=
 -->
