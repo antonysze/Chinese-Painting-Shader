@@ -1,6 +1,7 @@
 uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D inkTexture;
+uniform sampler2D paperTexture;
 uniform sampler2D texture;
 uniform vec2 resolution;
 
@@ -21,7 +22,7 @@ float rand(vec2 co){
 void main() {
     float depthCenter = texture2D(depthTexture, vUv).r;
 
-    float px = 2.5/resolution.x;
+    float px = 1.0/resolution.x;
 
     float Gdx = texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r +
         texture2D(depthTexture, vec2(vUv.s + px, vUv.t)).r * 2.0 +
@@ -77,12 +78,16 @@ void main() {
 
     float ink = texture2D(inkTexture, fract(vUv*1.0)).r;
 
-    float edge = clamp(1.0 - G * ink,0.0,1.0);
+    float edge;
     vec3 color = texture2D(texture, vUv).xyz;
     //color = floor(color*4.0)/4.0;
-    
+    float colorLevel = (color.x+color.y+color.z)/3.0;
+    if (false && colorLevel > 0.4 && edge < colorLevel)
+        edge = clamp(1.0 - G * ink,0.0,1.0);
+    else
+        edge = 1.0;
     //edge = pow(edge,2.0);
-    gl_FragColor = vec4(vec3(edge)*color , 1.0);
+    gl_FragColor = vec4(vec3(edge)*color * texture2D(paperTexture, vUv).xyz , 1.0);
     //texture2D(texture, vUv)
     //gl_FragColor = texture2D(texture, vUv);
 }

@@ -26,7 +26,7 @@
         var scene, composeScene, camera, composeCamera, renderer;
         var texture, depthTexture, normalTexture, depthMaterial, normalMaterial; //Texture & material
         var vShader, fShader, vCPShader, fCPShader, vComposeShader, fComposeShader; //shader
-        var inkTexture,inkInnerTexture;
+        var inkTexture,inkInnerTexture, paperTexture;
         var resolution;
 
         //objects
@@ -86,6 +86,10 @@
                 inkInnerTexture = data;
                 string++;
             });
+            textureLoader.load('resources/texture/chinese_paper_texture2.jpg', function(data) {
+                paperTexture = data;
+                string++;
+            });
         }
 
         function init () {
@@ -122,6 +126,7 @@
                     depthTexture: {type:'t', value: depthTexture},
                     normalTexture: {type:'t', value: normalTexture},
                     inkTexture: {type: 't', value: inkInnerTexture},
+                    paperTexture: {type: 't', value: paperTexture},
                     resolution: {type:'v2', value: resolution}
                 },
                 vertexShader: vComposeShader,
@@ -195,7 +200,7 @@
             renderer.render(scene, camera, texture);
 
             renderer.render(composeScene, composeCamera);
-            //renderer.render(scene, camera);
+            renderer.render(scene, camera);
         };
 
         function loadObject() {
@@ -213,7 +218,7 @@
 
                     //initial stats
                     object.position.set(0, -100, 0);
-                    object.rotation.set(-Math.PI / 2, 0, 0);
+                    object.rotation.set(-Math.PI / 2, 0, Math.PI);
 
                     //load texture & shader for it
                     var textureLoader = new THREE.TextureLoader();
@@ -253,9 +258,37 @@
 
                     scene.add(object);
                     naruto = object;
+                    
+                    //clone obj with origin shader
+                    var newObj = naruto.clone();
+                    newObj.position.set(-120, -100, 0);
+                    newObj.traverse(function (child) {
+                        if (child instanceof THREE.Mesh) {
+                            var texture;
+                            if (child.material.name != "Material__3")
+                                texture = textureLoader.load('ntxr001.png');
+                            else
+                                texture = textureLoader.load('ntxr005.png');
+                            
+                            materialMap[child.material.id] = new THREE.ShaderMaterial({
+                                uniforms: {
+                                    texture: {type: 't', value: texture},
+                                    inkTexture: {type: 't', value: inkTexture},
+                                    inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                    resolution: {type:'v2', value: resolution}
+                                },
+                                vertexShader: vShader,
+                                fragmentShader: fShader
+                            });
 
-                    for (var i = 0; i < 10; i ++) {
-                        var newObj = naruto.clone();
+                            child.material = materialMap[child.material.id];
+                        }
+                    });
+                    scene.add(newObj);
+
+                    //clone
+                    for (var i = 0; i < 5; i ++) {
+                        newObj = naruto.clone();
                         newObj.position.set(Math.random()*700-350,-100 + Math.random()*400 - 200,Math.random()*700-350);
                         newObj.rotation.set(Math.PI*Math.random()*2,Math.PI*Math.random()*2,Math.PI*Math.random()*2);
                         scene.add(newObj);
@@ -409,6 +442,81 @@
                         }
                     });
                     newObj.position.set(-700, -100, 100);
+                    scene.add(newObj);
+                });
+            });
+            mtlLoader = new THREE.MTLLoader();
+            mtlLoader.setPath('resources/obj/cat/');
+            mtlLoader.load('cat.mtl', function (materials) {
+                materials.preload();
+
+                objLoader = new THREE.OBJLoader();
+                objLoader.setPath('resources/obj/cat/');
+                objLoader.setMaterials(materials);
+                objLoader.load('cat.obj', function (object) {
+                    //initial stats
+                    object.position.set(150, -100, -200);
+                    object.scale.set(60,60,60);
+                    object.rotation.set(0, Math.PI, 0);
+
+                    //load texture & shader for it
+                    var textureLoader = new THREE.TextureLoader();
+                    textureLoader.setPath('resources/obj/cat/');
+                    var materialMap = {};
+                    object.traverse(function (child) {
+                        console.log(child);
+                        if (child instanceof THREE.Mesh) {
+                            if (child.material.id in materialMap) {
+                                console.log("Using predefined material");
+                                child.material = materialMap[child.material.id];
+                            } else {
+                                console.log("Creating new material, id: "+child.material.id);
+
+                                var texture;
+                                texture = textureLoader.load('cat_diff.png');
+                                
+                                materialMap[child.material.id] = new THREE.ShaderMaterial({
+                                    uniforms: {
+                                        texture: {type: 't', value: texture},
+                                        inkTexture: {type: 't', value: inkTexture},
+                                        inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                        resolution: {type:'v2', value: resolution}
+                                    },
+                                    vertexShader: vCPShader,
+                                    fragmentShader: fCPShader,
+                                    transparent: true,
+                                    depthWrite: true
+                                });
+
+                                child.material = materialMap[child.material.id];
+                            }
+                        }
+                    });
+
+                    scene.add(object);
+
+                    var newObj = object.clone();
+                    newObj.traverse(function (child) {
+                        if (child instanceof THREE.Mesh) {
+                            var texture;
+                            texture = textureLoader.load('cat_diff.png');
+                        
+                            
+                            materialMap[child.material.id] = new THREE.ShaderMaterial({
+                                uniforms: {
+                                    texture: {type: 't', value: texture},
+                                    inkTexture: {type: 't', value: inkTexture},
+                                    inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                    resolution: {type:'v2', value: resolution}
+                                },
+                                vertexShader: vShader,
+                                fragmentShader: fShader
+                            });
+
+                            child.material = materialMap[child.material.id];
+                        }
+                    });
+                    newObj.position.set(300, -100, -200);
                     scene.add(newObj);
                 });
             });
