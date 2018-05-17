@@ -40,7 +40,7 @@ https://github.com/antonysze/Chinese-Painting-Shader.git
 - edge draw by normal of object shader not working on low poly object like rock, gonna use **Sobel Edge Detection**[^4](#shader-reference) on hole screen shader
 - use dissolve to draw inner color
 
-### Progess
+### Progress
 ![enter image description here](https://lh3.googleusercontent.com/LFPXCVn8Of4CNFTwWpVDz1FHAvK5b8Ygj7ROqcKUmxAQ1PKxUft7-7w8kmbaoNuVAew9JaRBpx8)
 
 ### Exercise 5
@@ -92,6 +92,6 @@ void main()
 }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMxOTU0Mjk5NCw0NjU4MDU2NzEsMTUyND
+eyJoaXN0b3J5IjpbLTIyMzEzNzI2OCw0NjU4MDU2NzEsMTUyND
 k3NTU5NywtNjE4NTY1NzIxXX0=
 -->
