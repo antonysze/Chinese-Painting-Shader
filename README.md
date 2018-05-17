@@ -1,5 +1,7 @@
 ![enter image description here](https://lh3.googleusercontent.com/u_6Wx_Ebtp34lBk2PIHO_zGgQAE9GMxJU8_ANIhv_bvSNVcsS6T8r4oO0-_K5-IhaeVI7RsBiuU)
 ![enter image description here](https://lh3.googleusercontent.com/3nbKT7jVPRDi3hDn4dAY2tEeMebfYdeAw3ciR3hXt98esV1-MzLW1v5VcIlXpgaAbsMF8YYKOiY)
+### Github Link
+https://github.com/antonysze/Chinese-Painting-Shader.git
 ### Shader Reference
 1. [水墨畫search](https://so.csdn.net/so/search/s.do?q=%E6%B0%B4%E5%A2%A8%E7%95%AB+shader&t=blog&o=&s=&l=)
 2. [水墨畫 shader](https://blog.csdn.net/nannan0811666/article/details/79452197)
@@ -34,8 +36,12 @@
 ### ideas & notes
 - [not gonna try] ~~Check the normal around the original point by **Sobel Edge Detection**[^4](#shader-reference), the alpha be lower if the normal are very different~~
 - inner ink texture base on brightness, not longer uv
-- blur inner color then mix the ink texture
+- blur inner color then mix the ink texture ( did it )
 - edge draw by normal of object shader not working on low poly object like rock, gonna use **Sobel Edge Detection**[^4](#shader-reference) on hole screen shader
+- use dissolve to draw inner color
+
+### Progess
+![enter image description here](https://lh3.googleusercontent.com/LFPXCVn8Of4CNFTwWpVDz1FHAvK5b8Ygj7ROqcKUmxAQ1PKxUft7-7w8kmbaoNuVAew9JaRBpx8)
 
 ### Exercise 5
 
@@ -86,6 +92,6 @@ void main()
 }
 ```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDY1ODA1NjcxLDE1MjQ5NzU1OTcsLTYxOD
-U2NTcyMV19
+eyJoaXN0b3J5IjpbLTMxOTU0Mjk5NCw0NjU4MDU2NzEsMTUyND
+k3NTU5NywtNjE4NTY1NzIxXX0=
 -->
