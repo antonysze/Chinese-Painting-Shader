@@ -1,6 +1,9 @@
 uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
+uniform sampler2D inkTexture;
 uniform sampler2D texture;
+uniform vec2 resolution;
+
 
 varying vec2 vUv;
 
@@ -18,23 +21,38 @@ float rand(vec2 co){
 void main() {
     float depthCenter = texture2D(depthTexture, vUv).r;
 
-    float px = 1.0/1600.0 ;
+    float px = 2.5/resolution.x;
 
-    float Gx = texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r +
+    float Gdx = texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r +
         texture2D(depthTexture, vec2(vUv.s + px, vUv.t)).r * 2.0 +
         texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r -
         texture2D(depthTexture, vec2(vUv.s - px, vUv.t - px)).r -
         texture2D(depthTexture, vec2(vUv.s - px, vUv.t)).r * 2.0 -
         texture2D(depthTexture, vec2(vUv.s - px, vUv.t - px)).r;
-    float Gy = texture2D(depthTexture, vec2(vUv.s - px, vUv.t - px)).r +
+    float Gdy = texture2D(depthTexture, vec2(vUv.s - px, vUv.t - px)).r +
         texture2D(depthTexture, vec2(vUv.s, vUv.t - px)).r * 2.0 +
         texture2D(depthTexture, vec2(vUv.s + px, vUv.t - px)).r -
         texture2D(depthTexture, vec2(vUv.s - px, vUv.t + px)).r -
         texture2D(depthTexture, vec2(vUv.s, vUv.t + px)).r * 2.0 -
         texture2D(depthTexture, vec2(vUv.s + px, vUv.t + px)).r;
+
+    float Gnx = texture2D(normalTexture, vec2(vUv.s + px, vUv.t - px)).r +
+        texture2D(normalTexture, vec2(vUv.s + px, vUv.t)).r * 2.0 +
+        texture2D(normalTexture, vec2(vUv.s + px, vUv.t - px)).r -
+        texture2D(normalTexture, vec2(vUv.s - px, vUv.t - px)).r -
+        texture2D(normalTexture, vec2(vUv.s - px, vUv.t)).r * 2.0 -
+        texture2D(normalTexture, vec2(vUv.s - px, vUv.t - px)).r;
+    float Gny = texture2D(normalTexture, vec2(vUv.s - px, vUv.t - px)).r +
+        texture2D(normalTexture, vec2(vUv.s, vUv.t - px)).r * 2.0 +
+        texture2D(normalTexture, vec2(vUv.s + px, vUv.t - px)).r -
+        texture2D(normalTexture, vec2(vUv.s - px, vUv.t + px)).r -
+        texture2D(normalTexture, vec2(vUv.s, vUv.t + px)).r * 2.0 -
+        texture2D(normalTexture, vec2(vUv.s + px, vUv.t + px)).r;
     
-    float G = abs(Gx) + abs(Gy);
-    
+    float Gd = abs(Gdx) + abs(Gdy);
+    float Gn = abs(Gnx) + abs(Gny);
+    float G = Gd*0.7 + Gn*0.3;
+    //G = Gd;
     //vec3 leftpos = vec3(vUv.s - px, vUv.t, 1.0 - texture2D(depthTexture, vec2(vUv.s - px, vUv.t)).r);
     //vec3 rightpos = vec3(vUv.s + px, vUv.t, 1.0 - texture2D(depthTexture, vec2(vUv.s + px, vUv.t)).r);
     //vec3 uppos = vec3(vUv.s, vUv.t - px, 1.0 - texture2D(depthTexture, vec2(vUv.s, vUv.t - px)).r);
@@ -55,12 +73,16 @@ void main() {
     normEdge = 1.0 - normEdge; 
     */
     //float edge = 1.0 - (G<0.3?0.0:G);
-    float edge = 1.0 - clamp(sign(G-0.1),0.0,1.0);
+    //G = pow(G, 30.0);
+
+    float ink = texture2D(inkTexture, fract(vUv*1.0)).r;
+
+    float edge = clamp(1.0 - G * ink,0.0,1.0);
     vec3 color = texture2D(texture, vUv).xyz;
     //color = floor(color*4.0)/4.0;
-
+    
     //edge = pow(edge,2.0);
-    gl_FragColor = vec4(vec3(edge) * color, 1.0);
+    gl_FragColor = vec4(vec3(edge)*color , 1.0);
     //texture2D(texture, vUv)
     //gl_FragColor = texture2D(texture, vUv);
 }

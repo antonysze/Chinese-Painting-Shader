@@ -27,6 +27,7 @@
         var texture, depthTexture, normalTexture, depthMaterial, normalMaterial; //Texture & material
         var vShader, fShader, vCPShader, fCPShader, vComposeShader, fComposeShader; //shader
         var inkTexture,inkInnerTexture;
+        var resolution;
 
         //objects
         var naruto;
@@ -81,7 +82,7 @@
                 inkTexture = data;
                 string++;
             });
-            textureLoader.load('resources/texture/ink_inner_texture.jpg', function(data) {
+            textureLoader.load('resources/texture/ink_inner_texture3.jpg', function(data) {
                 inkInnerTexture = data;
                 string++;
             });
@@ -91,14 +92,16 @@
             var composeMaterial = {};
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x7ec0ee);
+            scene.background = new THREE.Color(0xe2d4b1);
 
             composeScene = new THREE.Scene();
-            composeScene.background = new THREE.Color(0xc07eee);
+            composeScene.background = new THREE.Color(0xe2d4b1);
 
             var width = window.innerWidth;
             var height = window.innerHeight;
             var aspect = width / height;
+            resolution = new THREE.Vector2(width, height);
+            console.log(resolution.x);
 
             var pars = {
                 minFilter: THREE.LinearFilter,
@@ -117,7 +120,9 @@
                 uniforms: {
                     texture: {type:'t', value: texture},
                     depthTexture: {type:'t', value: depthTexture},
-                    normalTexture: {type:'t', value: normalTexture}
+                    normalTexture: {type:'t', value: normalTexture},
+                    inkTexture: {type: 't', value: inkInnerTexture},
+                    resolution: {type:'v2', value: resolution}
                 },
                 vertexShader: vComposeShader,
                 fragmentShader: fComposeShader
@@ -189,8 +194,8 @@
             renderer.clearTarget(texture, true, true);
             renderer.render(scene, camera, texture);
 
-            //renderer.render(composeScene, composeCamera);
-            renderer.render(scene, camera);
+            renderer.render(composeScene, composeCamera);
+            //renderer.render(scene, camera);
         };
 
         function loadObject() {
@@ -232,7 +237,8 @@
                                     uniforms: {
                                         texture: {type: 't', value: texture},
                                         inkTexture: {type: 't', value: inkTexture},
-                                        inkInnerTexture: {type: 't', value: inkInnerTexture}
+                                        inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                        resolution: {type:'v2', value: resolution}
                                     },
                                     vertexShader: vCPShader,
                                     fragmentShader: fCPShader,
@@ -258,22 +264,22 @@
             });
 
             mtlLoader = new THREE.MTLLoader();
-            mtlLoader.setPath('resources/obj/OC12_Eucalyptus_globulus_Bluegum/');
-            mtlLoader.load('OC12_1.mtl', function (materials) {
+            mtlLoader.setPath('resources/obj/Farmhouse/');
+            mtlLoader.load('farmhouse_obj.mtl', function (materials) {
                 materials.preload();
 
                 objLoader = new THREE.OBJLoader();
-                objLoader.setPath('resources/obj/OC12_Eucalyptus_globulus_Bluegum/');
+                objLoader.setPath('resources/obj/Farmhouse/');
                 objLoader.setMaterials(materials);
-                objLoader.load('OC12_1.obj', function (object) {
+                objLoader.load('farmhouse_obj.obj', function (object) {
                     //initial stats
-                    object.position.set(300, -100, 100);
-                    object.scale.set(200,200,200);
-                    object.rotation.set(-Math.PI / 2, 0, 0);
+                    object.position.set(200, -100, 100);
+                    object.scale.set(10,10,10);
+                    object.rotation.set(0, 0, 0);
 
                     //load texture & shader for it
                     var textureLoader = new THREE.TextureLoader();
-                    textureLoader.setPath('resources/obj/OC12_Eucalyptus_globulus_Bluegum/');
+                    textureLoader.setPath('resources/obj/Farmhouse/');
                     var materialMap = {};
                     object.traverse(function (child) {
                         console.log(child);
@@ -285,16 +291,14 @@
                                 console.log("Creating new material, id: "+child.material.id);
 
                                 var texture;
-                                if (child.material.name != "LEAF2")
-                                    texture = textureLoader.load('OC12brk2.tif');
-                                else
-                                    texture = textureLoader.load('OC12lef2.tif');
-                                
+                                texture = textureLoader.load('Farmhouse Texture Bump Map .jpg');
+
                                 materialMap[child.material.id] = new THREE.ShaderMaterial({
                                     uniforms: {
                                         texture: {type: 't', value: texture},
                                         inkTexture: {type: 't', value: inkTexture},
-                                        inkInnerTexture: {type: 't', value: inkInnerTexture}
+                                        inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                        resolution: {type:'v2', value: resolution}
                                     },
                                     vertexShader: vCPShader,
                                     fragmentShader: fCPShader,
@@ -313,17 +317,14 @@
                     newObj.traverse(function (child) {
                         if (child instanceof THREE.Mesh) {
                             var texture;
-                            
-                            if (child.material.name != "LEAF2")
-                                texture = textureLoader.load('OC12brk2.tif');
-                            else
-                                texture = textureLoader.load('OC12lef2.tif');
+                            texture = textureLoader.load('Farmhouse Texture Bump Map .jpg');
                             
                             materialMap[child.material.id] = new THREE.ShaderMaterial({
                                 uniforms: {
                                     texture: {type: 't', value: texture},
                                     inkTexture: {type: 't', value: inkTexture},
-                                    inkInnerTexture: {type: 't', value: inkInnerTexture}
+                                    inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                    resolution: {type:'v2', value: resolution}
                                 },
                                 vertexShader: vShader,
                                 fragmentShader: fShader
@@ -333,6 +334,81 @@
                         }
                     });
                     newObj.position.set(500, -100, 100);
+                    scene.add(newObj);
+                });
+            });
+            mtlLoader = new THREE.MTLLoader();
+            mtlLoader.setPath('resources/obj/Rock1/');
+            mtlLoader.load('Rock1.mtl', function (materials) {
+                materials.preload();
+
+                objLoader = new THREE.OBJLoader();
+                objLoader.setPath('resources/obj/Rock1/');
+                objLoader.setMaterials(materials);
+                objLoader.load('Rock1.obj', function (object) {
+                    //initial stats
+                    object.position.set(-300, -100, 100);
+                    object.scale.set(40,40,40);
+                    object.rotation.set(0, Math.PI, 0);
+
+                    //load texture & shader for it
+                    var textureLoader = new THREE.TextureLoader();
+                    textureLoader.setPath('resources/obj/Rock1/');
+                    var materialMap = {};
+                    object.traverse(function (child) {
+                        console.log(child);
+                        if (child instanceof THREE.Mesh) {
+                            if (child.material.id in materialMap) {
+                                console.log("Using predefined material");
+                                child.material = materialMap[child.material.id];
+                            } else {
+                                console.log("Creating new material, id: "+child.material.id);
+
+                                var texture;
+                                texture = textureLoader.load('Rock-Texture-Surface.jpg');
+                                
+                                materialMap[child.material.id] = new THREE.ShaderMaterial({
+                                    uniforms: {
+                                        texture: {type: 't', value: texture},
+                                        inkTexture: {type: 't', value: inkTexture},
+                                        inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                        resolution: {type:'v2', value: resolution}
+                                    },
+                                    vertexShader: vCPShader,
+                                    fragmentShader: fCPShader,
+                                    transparent: true,
+                                    depthWrite: true
+                                });
+
+                                child.material = materialMap[child.material.id];
+                            }
+                        }
+                    });
+
+                    scene.add(object);
+
+                    var newObj = object.clone();
+                    newObj.traverse(function (child) {
+                        if (child instanceof THREE.Mesh) {
+                            var texture;
+                            texture = textureLoader.load('Rock-Texture-Surface.jpg');
+                        
+                            
+                            materialMap[child.material.id] = new THREE.ShaderMaterial({
+                                uniforms: {
+                                    texture: {type: 't', value: texture},
+                                    inkTexture: {type: 't', value: inkTexture},
+                                    inkInnerTexture: {type: 't', value: inkInnerTexture},
+                                    resolution: {type:'v2', value: resolution}
+                                },
+                                vertexShader: vShader,
+                                fragmentShader: fShader
+                            });
+
+                            child.material = materialMap[child.material.id];
+                        }
+                    });
+                    newObj.position.set(-700, -100, 100);
                     scene.add(newObj);
                 });
             });

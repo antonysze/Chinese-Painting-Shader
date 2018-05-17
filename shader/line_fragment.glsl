@@ -34,6 +34,35 @@ float rim()
  return rim;
 }
 
+float newColor(float max, float inColor) {
+    return inColor*0.3+max*0.7;
+}
+
+float max3(vec3 data) {
+    float maxV = max(data.x, data.y);
+    maxV = max(maxV, data.z);
+    return maxV;
+} 
+
+vec4 blur13(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
+  vec4 color = vec4(0.0);
+  vec2 off1 = vec2(1.411764705882353) * direction;
+  vec2 off2 = vec2(3.2941176470588234) * direction;
+  vec2 off3 = vec2(5.176470588235294) * direction;
+  color += texture2D(image, uv) * 0.1964825501511404;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.2969069646728344;
+  color += texture2D(image, uv + (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv - (off2 / resolution)) * 0.09447039785044732;
+  color += texture2D(image, uv + (off3 / resolution)) * 0.010381362401148057;
+  color += texture2D(image, uv - (off3 / resolution)) * 0.010381362401148057;
+  return color;
+}
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 void main()
 { 
  vec3 lightDir = vec3(1.0, 1.0, 1.0);
@@ -60,14 +89,24 @@ void main()
 //outline
  float ink = texture2D(inkTexture, fract(vUv*2.0)).r;
  float alpah = clamp(rim-ink, 0.0, 1.0);
-    vec4 outline = vec4(vec3(0.0), sqrt(alpah));
 
 //inner
- vec3 originColor = texture2D(texture, vUv).xyz;
- originColor = floor(originColor*4.0)/4.0;
- vec3 inkInner = texture2D(inkInnerTexture, fract(vUv*5.0)).xyz;
- originColor *= inkInner * ink;
- vec4 innerColor = vec4(originColor, inkInner * ink*2.0);
+ vec3 originColor = blur13(texture, vUv, resolution, vec2(rand(vUv)*2.0-1.0,rand(vUv)*2.0-1.0)).xyz;//texture2D(texture, vUv).xyz;
+ float maxV = max3(originColor);
+ 
+ originColor.r = newColor(maxV, originColor.r);
+ originColor.g = newColor(maxV, originColor.g);
+ originColor.b = newColor(maxV, originColor.b);
+ originColor*=1.2;
+ //originColor *= vec3(0.886,0.831,0.694);
+ //originColor = ceil(originColor*4.0)/4.0;
+ 
 
- gl_FragColor = outline;// +  innerColor;
+ vec3 inkInner = texture2D(inkInnerTexture, vUv).xyz;
+ //originColor *= ink;
+ originColor = 1.0-inkInner*(1.0-originColor);
+ originColor *= vec3(0.886,0.831,0.694);
+ vec4 color = vec4(originColor - alpah, 1.0);
+
+ gl_FragColor = color;
 }

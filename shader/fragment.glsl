@@ -38,5 +38,5 @@ void main()
  
  //brightness = ceil(brightness * 3.0)/ 3.0;
  
- gl_FragColor = texture2D(texture, vUv) * brightness;
+ gl_FragColor = vec4(texture2D(texture, vUv).xyz * brightness, 1.0);
 }
