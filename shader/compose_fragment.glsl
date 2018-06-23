@@ -82,7 +82,7 @@ void main() {
     vec3 color = texture2D(texture, vUv).xyz;
     //color = floor(color*4.0)/4.0;
     float colorLevel = (color.x+color.y+color.z)/3.0;
-    if (false && colorLevel > 0.4 && edge < colorLevel)
+    if (colorLevel > 0.4 && edge < colorLevel)
         edge = clamp(1.0 - G * ink,0.0,1.0);
     else
         edge = 1.0;

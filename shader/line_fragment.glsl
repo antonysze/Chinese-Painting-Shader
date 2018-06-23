@@ -34,10 +34,12 @@ float rim()
  return rim;
 }
 
-float newColor(float max, float inColor) {
-    return inColor*0.3+max*0.7;
+// turn a color to target color
+float lerpColor(float target, float inColor, float value) {
+    return inColor*value+target*(1.0-value);
 }
 
+// return max value in a vector 3
 float max3(vec3 data) {
     float maxV = max(data.x, data.y);
     maxV = max(maxV, data.z);
@@ -74,6 +76,10 @@ void main()
  brightness = ceil(brightness * 3.0)/ 3.0;
 
  float rim = rim();
+
+ /* not work on building */
+ //float borderAlaph = (rim<0.15)?sqrt(rim):1.0;
+
  rim = clamp(sin((rim/_thred+0.15)*pi), 0.0, 1.0);
 
  
@@ -86,17 +92,19 @@ void main()
  //gl_FragColor = vec4(vec3(0.0), rim);
 
 
-//outline
+ /* outline */
  float ink = texture2D(inkTexture, fract(vUv*2.0)).r;
  float alpah = clamp(rim-ink, 0.0, 1.0);
 
-//inner
+ /* inner */
+ //blur color
  vec3 originColor = blur13(texture, vUv, resolution, vec2(rand(vUv)*2.0-1.0,rand(vUv)*2.0-1.0)).xyz;//texture2D(texture, vUv).xyz;
- float maxV = max3(originColor);
  
- originColor.r = newColor(maxV, originColor.r);
- originColor.g = newColor(maxV, originColor.g);
- originColor.b = newColor(maxV, originColor.b);
+ float maxV = max3(originColor);
+ float lerpValue = 0.3;
+ originColor.r = lerpColor(maxV, originColor.r, lerpValue);
+ originColor.g = lerpColor(maxV, originColor.g, lerpValue);
+ originColor.b = lerpColor(maxV, originColor.b, lerpValue);
  originColor*=1.2;
  //originColor *= vec3(0.886,0.831,0.694);
  //originColor = ceil(originColor*4.0)/4.0;
@@ -109,4 +117,5 @@ void main()
  vec4 color = vec4(originColor - alpah, 1.0);
 
  gl_FragColor = color;
+ //gl_FragColor = vec4(vec3(borderAlaph), 1.0);
 }
